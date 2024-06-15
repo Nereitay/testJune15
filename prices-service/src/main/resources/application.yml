@@ -24,3 +24,8 @@ spring:
       path: /h2-console
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /api
