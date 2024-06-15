@@ -5,3 +5,15 @@ logging:
     dateformat: HH:mm:ss:SSS
   file:
     path: "logs/${spring.application.name}"
+db:
+  h2:
+    url: jdbc:h2:mem:testjun15;DB_CLOSE_DELAY=-1;MODE=MYSQL
+    username: test
+    password: test
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    generate-ddl: false
+    open-in-view: false
