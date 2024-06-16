@@ -1,10 +1,11 @@
 ## Project Description
 
-This project is a Java application built with Spring Boot and follows the principles of Hexagonal Architecture. It provides a REST 
+This project is a Java(v17) application built with Spring Boot and follows the principles of Hexagonal Architecture. It 
+provides a REST 
 API endpoint for querying pricing information based on given parameters. It utilizes an in-memory H2 database 
 initialized with example data. The application retrieves and returns details about product pricing from the `PRICES` 
 table, which includes fields such as brand ID, start and end dates of the pricing period, product ID, price list 
-identifier, priority, final price, and currency etc.
+identifier, priority, final price, and currency etc.The project uses SonarQube for code quality analysis.
 
 ## Project Structure
 
