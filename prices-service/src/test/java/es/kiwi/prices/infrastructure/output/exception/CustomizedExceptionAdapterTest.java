@@ -1,6 +1,7 @@
 package es.kiwi.prices.infrastructure.output.exception;
 
 import es.kiwi.prices.domain.exception.PricesNotFoundException;
+import es.kiwi.prices.infrastructure.output.constants.ExceptionConstants;
 import es.kiwi.prices.infrastructure.output.exception.data.responses.ExceptionResponses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,77 +37,81 @@ class CustomizedExceptionAdapterTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    private static final String TEST_DESCRIPTION = "Test Description";
+    private static final String TEST_EXCEPTION = "Test Exception";
+    private static final String NOT_FOUND = "Prices not found";
+    private static final String TEST_ERROR = "Test Error";
+
     @Test
     void handleAllExceptions_InternalServerError() {
-        Exception ex = new Exception("Test Exception");
-        when(webRequestMock.getDescription(false)).thenReturn("Test Description");
+        Exception ex = new Exception(TEST_EXCEPTION);
+        when(webRequestMock.getDescription(false)).thenReturn(TEST_DESCRIPTION);
 
         ResponseEntity<Object> responseEntity = customizedExceptionAdapter.handleAllExceptions(ex, webRequestMock);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         ExceptionResponses responseBody = (ExceptionResponses) responseEntity.getBody();
-        assertEquals("Test Exception", responseBody.getMessage());
-        assertEquals(Collections.singletonList("Test Description"), responseBody.getDetails());
+        assertEquals(TEST_EXCEPTION, responseBody.getMessage());
+        assertEquals(Collections.singletonList(TEST_DESCRIPTION), responseBody.getDetails());
     }
 
     @Test
     void handleUserNotFoundException_NotFound() {
-        PricesNotFoundException ex = new PricesNotFoundException("Prices not found");
-        when(webRequestMock.getDescription(false)).thenReturn("Test Description");
+        PricesNotFoundException ex = new PricesNotFoundException(NOT_FOUND);
+        when(webRequestMock.getDescription(false)).thenReturn(TEST_DESCRIPTION);
 
         ResponseEntity<Object> responseEntity = customizedExceptionAdapter.handleUserNotFoundException(ex, webRequestMock);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         ExceptionResponses responseBody = (ExceptionResponses) responseEntity.getBody();
-        assertEquals("Prices not found", responseBody.getMessage());
-        assertEquals(Collections.singletonList("Test Description"), responseBody.getDetails());
+        assertEquals(NOT_FOUND, responseBody.getMessage());
+        assertEquals(Collections.singletonList(TEST_DESCRIPTION), responseBody.getDetails());
     }
 
     @Test
     void constraintViolationExceptionHandler_BadRequest() {
-        ConstraintViolationException ex = new ConstraintViolationException("Validation failed", new HashSet<>());
-        when(webRequestMock.getDescription(false)).thenReturn("Test Description");
+        ConstraintViolationException ex = new ConstraintViolationException(ExceptionConstants.VALIDATION_EXCEPTION, new HashSet<>());
+        when(webRequestMock.getDescription(false)).thenReturn(TEST_DESCRIPTION);
 
         ResponseEntity<Object> responseEntity = customizedExceptionAdapter.ConstraintViolationExceptionHandler(ex);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         ExceptionResponses responseBody = (ExceptionResponses) responseEntity.getBody();
-        assertEquals("Validation Failed", responseBody.getMessage());
-        assertEquals(Collections.emptyList(), responseBody.getDetails()); // Assuming no specific details here
+        assertEquals(ExceptionConstants.VALIDATION_EXCEPTION, responseBody.getMessage());
+        assertEquals(Collections.emptyList(), responseBody.getDetails());
     }
 
     @Test
     void handleBindException_BadRequest() {
         BindException ex = new BindException(new Object(), "objectName");
-        ex.addError(new org.springframework.validation.ObjectError("objectName", "Test Error"));
+        ex.addError(new org.springframework.validation.ObjectError("objectName", TEST_ERROR));
 
-        when(webRequestMock.getDescription(false)).thenReturn("Test Description");
+        when(webRequestMock.getDescription(false)).thenReturn(TEST_DESCRIPTION);
 
         ResponseEntity<Object> responseEntity = customizedExceptionAdapter.handleBindException(ex, null, HttpStatus.BAD_REQUEST, webRequestMock);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         ExceptionResponses responseBody = (ExceptionResponses) responseEntity.getBody();
-        assertEquals("Validation Failed", responseBody.getMessage());
+        assertEquals(ExceptionConstants.VALIDATION_EXCEPTION, responseBody.getMessage());
 
-        assertTrue(responseBody.getDetails().get(0).contains("Test Error"));
+        assertTrue(responseBody.getDetails().get(0).contains(TEST_ERROR));
     }
 
     @Test
     void handleMethodArgumentNotValid_BadRequest() throws NoSuchMethodException {
-        Object target = null;
 
         BindingResult bindingResultMock = Mockito.mock(BindingResult.class);
-        Mockito.when(bindingResultMock.getAllErrors()).thenReturn(Collections.singletonList(new org.springframework.validation.FieldError("objectName", "fieldName", "Test Error")));
+        Mockito.when(bindingResultMock.getAllErrors()).thenReturn(Collections.singletonList(new org.springframework.validation.FieldError("objectName", "fieldName", TEST_ERROR)));
 
         MethodArgumentNotValidException ex = new MethodArgumentNotValidException(new MethodParameter(Object.class.getDeclaredConstructor(), -1), bindingResultMock);
 
-        when(webRequestMock.getDescription(false)).thenReturn("Test Description");
+        when(webRequestMock.getDescription(false)).thenReturn(TEST_DESCRIPTION);
 
         ResponseEntity<Object> responseEntity = customizedExceptionAdapter.handleMethodArgumentNotValid(ex, null, HttpStatus.BAD_REQUEST, webRequestMock);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         ExceptionResponses responseBody = (ExceptionResponses) responseEntity.getBody();
-        assertEquals("Validation Failed", responseBody.getMessage());
-        assertEquals(Collections.singletonList("Test Error"), responseBody.getDetails());
+        assertEquals(ExceptionConstants.VALIDATION_EXCEPTION, responseBody.getMessage());
+        assertEquals(Collections.singletonList(TEST_ERROR), responseBody.getDetails());
     }
 }
