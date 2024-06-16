@@ -11,4 +11,5 @@ CREATE TABLE prices (
     curr CHAR(3),
     last_update DATETIME,
     last_update_by VARCHAR(50)
-)
+);
+ALTER TABLE prices ADD INDEX brand_product_idx (brand_id, product_id);
