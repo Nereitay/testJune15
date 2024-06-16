@@ -1,6 +1,7 @@
 package es.kiwi.prices.infrastructure.output.exception;
 
 import es.kiwi.prices.domain.exception.PricesNotFoundException;
+import es.kiwi.prices.infrastructure.output.constants.ExceptionConstants;
 import es.kiwi.prices.infrastructure.output.exception.data.responses.ExceptionResponses;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -25,51 +25,46 @@ public class CustomizedExceptionAdapter extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
+        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ex.getMessage(), List.of(request.getDescription(false)));
 
-        return new ResponseEntity(exceptionResponses, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(exceptionResponses, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(PricesNotFoundException.class)
     public final ResponseEntity<Object> handleUserNotFoundException(PricesNotFoundException ex, WebRequest request) {
-        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
+        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ex.getMessage(), List.of(request.getDescription(false)));
 
-        return new ResponseEntity(exceptionResponses, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exceptionResponses, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> ConstraintViolationExceptionHandler(ConstraintViolationException ex) {
         List<String> errors = new ArrayList<>();
-        ex.getConstraintViolations().forEach(error -> {
-            errors.add(error.toString());
-        });
+        ex.getConstraintViolations().forEach(error -> errors.add(error.toString()));
 
-        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), "Validation Failed", errors);
+        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ExceptionConstants.VALIDATION_EXCEPTION,
+                errors);
 
-        return new ResponseEntity(exceptionResponses, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionResponses, HttpStatus.BAD_REQUEST);
     }
 
     @Override
     protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            errors.add(error.toString());
-        });
+        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.toString()));
 
-        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), "Validation Failed", errors);
+        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ExceptionConstants.VALIDATION_EXCEPTION, errors);
 
-        return new ResponseEntity(exceptionResponses, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionResponses, HttpStatus.BAD_REQUEST);
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().stream().forEach(error -> {
-            errors.add(error.getDefaultMessage());
-        });
+        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
 
-        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), "Validation Failed", errors);
+        ExceptionResponses exceptionResponses = new ExceptionResponses(LocalDateTime.now(), ExceptionConstants.VALIDATION_EXCEPTION, errors);
 
-        return new ResponseEntity(exceptionResponses, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionResponses, HttpStatus.BAD_REQUEST);
     }
 }

@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class PricesRestAdapterTest {
+class PricesRestAdapterTest {
     @Autowired
     private PricesRestMapper pricesRestMapper;
 

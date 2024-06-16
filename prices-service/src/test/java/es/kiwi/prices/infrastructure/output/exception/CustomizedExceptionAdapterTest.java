@@ -23,7 +23,7 @@ import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-public class CustomizedExceptionAdapterTest {
+class CustomizedExceptionAdapterTest {
 
     @Mock
     private WebRequest webRequestMock;
