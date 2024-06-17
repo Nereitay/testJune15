@@ -1,6 +1,6 @@
 package es.kiwi.prices.infrastructure.config;
 
-import es.kiwi.prices.domain.service.PricesService;
+import es.kiwi.prices.application.service.PricesService;
 import es.kiwi.prices.infrastructure.output.persistence.PricesPersistenceAdapter;
 import es.kiwi.prices.infrastructure.output.persistence.mapper.PricesPersistenceMapper;
 import es.kiwi.prices.infrastructure.output.persistence.repository.PricesRepository;

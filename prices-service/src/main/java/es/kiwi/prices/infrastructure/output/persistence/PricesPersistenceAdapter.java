@@ -1,7 +1,7 @@
 package es.kiwi.prices.infrastructure.output.persistence;
 
 import es.kiwi.prices.domain.model.Prices;
-import es.kiwi.prices.application.ports.output.PricesOutputPort;
+import es.kiwi.prices.domain.ports.output.PricesOutputPort;
 import es.kiwi.prices.infrastructure.output.persistence.entity.PricesEntity;
 import es.kiwi.prices.infrastructure.output.persistence.mapper.PricesPersistenceMapper;
 import es.kiwi.prices.infrastructure.output.persistence.repository.PricesRepository;

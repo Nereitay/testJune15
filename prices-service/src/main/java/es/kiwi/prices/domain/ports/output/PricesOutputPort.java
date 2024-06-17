@@ -1,4 +1,4 @@
-package es.kiwi.prices.application.ports.output;
+package es.kiwi.prices.domain.ports.output;
 
 import es.kiwi.prices.domain.model.Prices;
 

@@ -1,7 +1,7 @@
 package es.kiwi.prices.infrastructure.input.rest;
 
 import es.kiwi.prices.domain.model.Prices;
-import es.kiwi.prices.application.ports.input.GetPricesUseCase;
+import es.kiwi.prices.domain.ports.input.GetPricesUseCase;
 import es.kiwi.prices.infrastructure.input.rest.data.requests.PricesQueryRequest;
 import es.kiwi.prices.infrastructure.input.rest.data.responses.PricesQueryResponse;
 import es.kiwi.prices.infrastructure.input.rest.mapper.PricesRestMapper;

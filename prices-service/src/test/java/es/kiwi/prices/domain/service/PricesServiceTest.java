@@ -1,8 +1,9 @@
 package es.kiwi.prices.domain.service;
 
+import es.kiwi.prices.application.service.PricesService;
 import es.kiwi.prices.domain.exception.PricesNotFoundException;
 import es.kiwi.prices.domain.model.Prices;
-import es.kiwi.prices.application.ports.output.PricesOutputPort;
+import es.kiwi.prices.domain.ports.output.PricesOutputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
