@@ -1,7 +1,7 @@
 package es.kiwi.prices.infrastructure.input.rest;
 
-import es.kiwi.prices.application.ports.input.GetPricesUseCase;
 import es.kiwi.prices.domain.model.Prices;
+import es.kiwi.prices.application.ports.input.GetPricesUseCase;
 import es.kiwi.prices.infrastructure.input.rest.data.requests.PricesQueryRequest;
 import es.kiwi.prices.infrastructure.input.rest.data.responses.PricesQueryResponse;
 import es.kiwi.prices.infrastructure.input.rest.mapper.PricesRestMapper;
@@ -22,15 +22,13 @@ import javax.validation.Valid;
 public class PricesRestAdapter {
 
     private final GetPricesUseCase getPricesUseCase;
-
     private final PricesRestMapper pricesRestMapper;
 
     @Tag(name = "/clients")
     @Operation(summary = "This method is used to get prices.")
     @GetMapping(value = "/prices")
-    public ResponseEntity<PricesQueryResponse> getPrices(@Valid PricesQueryRequest pricesQueryRequest) {
-        Prices prices = pricesRestMapper.toPrices(pricesQueryRequest);
-        prices = getPricesUseCase.getPricesByDate(prices);
+    public ResponseEntity<PricesQueryResponse> getPrices(@Valid PricesQueryRequest request) {
+        Prices prices = getPricesUseCase.getPricesByDate(request.getProductId(), request.getBrandId(), request.getApplicationDate());
         return new ResponseEntity<>(pricesRestMapper.toPricesQueryResponse(prices), HttpStatus.OK);
     }
 }

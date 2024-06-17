@@ -13,10 +13,11 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class PricesPersistenceAdapterTest {
@@ -36,10 +37,9 @@ class PricesPersistenceAdapterTest {
 
     @Test
     void testGetPricesByDateAndProductAndBrand_PriceFound() {
-        Prices prices = new Prices();
-        prices.setProductId(35455L);
-        prices.setBrandId(1L);
-        prices.setApplicationDate(LocalDateTime.of(2024, 6, 14, 10, 0));
+        Prices prices1 = new Prices();
+        prices1.setProductId(35455L);
+        prices1.setBrandId(1L);
 
         PricesEntity pricesEntity1 = new PricesEntity();
         pricesEntity1.setId(1L);
@@ -69,16 +69,17 @@ class PricesPersistenceAdapterTest {
 
         List<PricesEntity> pricesEntities = Arrays.asList(pricesEntity1, pricesEntity2);
 
-        when(pricesRepository.findByProductIdAndBrandId(35455L, 1L)).thenReturn(pricesEntities);
-        when(pricesPersistenceMapper.toPrices(pricesEntity2)).thenReturn(prices);
+        when(pricesRepository.findByProductIdAndBrandIdAndApplicationDate(35455L, 1L, LocalDateTime.of(2024, 6, 14, 10, 0))).thenReturn(pricesEntities);
+        when(pricesPersistenceMapper.toPrices(pricesEntity2)).thenReturn(prices1);
 
-        Optional<Prices> result = pricesPersistenceAdapter.getPricesByDateAndProductAndBrand(prices);
+        List<Prices> result = pricesPersistenceAdapter.findPrices(35455L, 1L, LocalDateTime.of(2024, 6, 14, 10, 0));
 
-        assertTrue(result.isPresent());
-        Prices resultPrices = result.get();
-        assertEquals(prices.getProductId(), resultPrices.getProductId());
-        assertEquals(prices.getBrandId(), resultPrices.getBrandId());
-        assertEquals(prices.getApplicationDate(), resultPrices.getApplicationDate());
+        assertFalse(result.isEmpty());
+        Prices resultPrices = result.get(1);
+        assertEquals(prices1.getProductId(), resultPrices.getProductId());
+        assertEquals(prices1.getBrandId(), resultPrices.getBrandId());
+        assertEquals(prices1.getStartDate(), resultPrices.getStartDate());
+        assertEquals(prices1.getEndDate(), resultPrices.getEndDate());
     }
 
     @Test
@@ -86,35 +87,26 @@ class PricesPersistenceAdapterTest {
         Prices prices = new Prices();
         prices.setProductId(35455L);
         prices.setBrandId(1L);
-        prices.setApplicationDate(LocalDateTime.of(2024, 6, 14, 10, 0));
 
         List<PricesEntity> pricesEntities = Arrays.asList();
 
-        when(pricesRepository.findByProductIdAndBrandId(35455L, 1L)).thenReturn(pricesEntities);
+        when(pricesRepository.findByProductIdAndBrandIdAndApplicationDate(35455L, 1L, LocalDateTime.of(2024, 6, 14, 10, 0))).thenReturn(pricesEntities);
 
-        Optional<Prices> result = pricesPersistenceAdapter.getPricesByDateAndProductAndBrand(prices);
+        List<Prices> result = pricesPersistenceAdapter.findPrices(35455L, 1L, LocalDateTime.of(2024, 6, 14, 10, 0));
 
-        assertFalse(result.isPresent());
+        assertTrue(result.isEmpty());
     }
 
     @Test
     void testGetPricesByDateAndProductAndBrand_PriceNotInDateRange() {
-        Prices prices = new Prices();
-        prices.setProductId(35455L);
-        prices.setBrandId(1L);
-        prices.setApplicationDate(LocalDateTime.of(2024, 6, 14, 10, 0));
 
-        PricesEntity pricesEntity = new PricesEntity();
-        pricesEntity.setStartDate(LocalDateTime.of(2024, 6, 14, 12, 0));
-        pricesEntity.setEndDate(LocalDateTime.of(2024, 12, 31, 23, 59));
-        pricesEntity.setPriority(1);
+        List<PricesEntity> pricesEntities = Arrays.asList();
 
-        List<PricesEntity> pricesEntities = Arrays.asList(pricesEntity);
+        when(pricesRepository.findByProductIdAndBrandIdAndApplicationDate(any(Long.class), any(Long.class), any(LocalDateTime.class)))
+                .thenReturn(pricesEntities);
 
-        when(pricesRepository.findByProductIdAndBrandId(35455L, 1L)).thenReturn(pricesEntities);
+        List<Prices> result = pricesPersistenceAdapter.findPrices(35455L, 1L, LocalDateTime.of(2024, 6, 14, 10, 0));
 
-        Optional<Prices> result = pricesPersistenceAdapter.getPricesByDateAndProductAndBrand(prices);
-
-        assertFalse(result.isPresent());
+        assertTrue(result.isEmpty());
     }
 }

@@ -2,9 +2,10 @@ package es.kiwi.prices.application.ports.output;
 
 import es.kiwi.prices.domain.model.Prices;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface PricesOutputPort {
 
-    Optional<Prices> getPricesByDateAndProductAndBrand(Prices prices);
+    List<Prices> findPrices(Long productId, Long brandId, LocalDateTime applicationDate);
 }

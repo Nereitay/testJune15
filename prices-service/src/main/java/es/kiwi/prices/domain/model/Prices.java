@@ -23,5 +23,4 @@ public class Prices {
 
     private String curr;
 
-    private LocalDateTime applicationDate;
 }
