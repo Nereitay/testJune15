@@ -91,7 +91,11 @@ All these 5 cases have been tested in PricesRestAdapterTest.java
     git clone git@github.com:Nereitay/testJune15.git
     cd testJune15
 2. **Build the project using Maven**.
+****
+    mvn clean compile
 3. **Run the application**.
+****
+    mvn spring-boot:run -pl prices-service
 4. **Access the API using a tool like Postman or Swagger url http://host:port/api**.
 
 ### Example API Usage
